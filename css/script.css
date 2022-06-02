@@ -161,10 +161,24 @@ form {
 	justify-content: center;
 }
 
-.authorization__header {
+.autorization__header {
 	display: flex;
 	justify-content: space-between;
 	margin: 21px 14px 0px 14px;
+}
+
+.autorization__header-close {
+	display: block;
+	width: 14px;
+	height: 14px;
+	--weight: 0.5px;
+	--aa: 1px;
+	/* anti-aliasing */
+	--color: #022d36;
+	border: none;
+	background:
+		linear-gradient(45deg, transparent calc(50% - var(--weight) - var(--aa)), var(--color) calc(50% - var(--weight)), var(--color) calc(50% + var(--weight)), transparent calc(50% + var(--weight) + var(--aa))),
+		linear-gradient(-45deg, transparent calc(50% - var(--weight) - var(--aa)), var(--color) calc(50% - var(--weight)), var(--color) calc(50% + var(--weight)), transparent calc(50% + var(--weight) + var(--aa)));
 }
 
 .authorization__inner {
@@ -173,6 +187,10 @@ form {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.authorization__inner button {
+	width: 120px;
 }
 
 .authorization form {
@@ -188,11 +206,36 @@ form {
 	padding: 2px;
 }
 
-.authorization__inner button {
-	width: 120px;
+.autorization__footer {
+	display: flex;
+	justify-content: flex-end;
+	margin: 5px;
 }
 
-.authorization__header-close {
+.autorization__footer-back {
+	width: 65px;
+	margin: 10px;
+}
+
+
+
+.confirmation {
+	background-color: #FFFFFF;
+	width: 273px;
+	height: 319px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+
+.confirmation__header {
+	display: flex;
+	justify-content: space-between;
+	margin: 21px 14px 0px 14px;
+}
+
+.confirmation__header-close {
 	display: block;
 	width: 14px;
 	height: 14px;
@@ -204,6 +247,84 @@ form {
 	background:
 		linear-gradient(45deg, transparent calc(50% - var(--weight) - var(--aa)), var(--color) calc(50% - var(--weight)), var(--color) calc(50% + var(--weight)), transparent calc(50% + var(--weight) + var(--aa))),
 		linear-gradient(-45deg, transparent calc(50% - var(--weight) - var(--aa)), var(--color) calc(50% - var(--weight)), var(--color) calc(50% + var(--weight)), transparent calc(50% + var(--weight) + var(--aa)));
+}
+
+.confirmation__inner {
+	width: inherit;
+	height: inherit;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.confirmation__inner button {
+	width: 65;
+}
+
+.confirmation form {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	width: 245px;
+	gap: 5px;
+}
+
+
+
+.confirmation input {
+	height: 32px;
+	padding: 2px;
+}
+
+.confirmation__footer {
+	display: flex;
+	justify-content: flex-end;
+	margin: 5px;
+}
+
+.confirmation__footer-back {
+	width: 65px;
+	margin: 10px;
+}
+
+
+.settings {
+	background-color: #FFFFFF;
+	width: 273px;
+	height: 319px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.confirmation__header {
+	display: flex;
+	justify-content: space-between;
+	margin: 21px 14px 0px 14px;
+}
+
+.settings__header-close {
+	display: block;
+	width: 14px;
+	height: 14px;
+	--weight: 0.5px;
+	--aa: 1px;
+	/* anti-aliasing */
+	--color: #022d36;
+	border: none;
+	background:
+		linear-gradient(45deg, transparent calc(50% - var(--weight) - var(--aa)), var(--color) calc(50% - var(--weight)), var(--color) calc(50% + var(--weight)), transparent calc(50% + var(--weight) + var(--aa))),
+		linear-gradient(-45deg, transparent calc(50% - var(--weight) - var(--aa)), var(--color) calc(50% - var(--weight)), var(--color) calc(50% + var(--weight)), transparent calc(50% + var(--weight) + var(--aa)));
+	z-index: 1;
+}
+
+.settings__inner button {
+	width: 65;
+}
+
+.settings input {
+	height: 32px;
+	padding: 2px;
 }
 
 .visible {

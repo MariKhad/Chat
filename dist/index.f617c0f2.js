@@ -530,10 +530,9 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _jsCookie = require("js-cookie");
 var _jsCookieDefault = parcelHelpers.interopDefault(_jsCookie);
 var _viewJs = require("./view.js");
-const login = "Я";
+document.addEventListener("DOMContentLoaded", _viewJs.modalWindowsHandler);
+let login = "Я";
 _viewJs.CHAT_UI.FORM.addEventListener('submit', addMessage);
-_viewJs.CHAT_UI.ENTER.addEventListener('click', _viewJs.hideDisplayAutorization);
-_viewJs.CHAT_UI.AUTHORIZATION_CLOSE.addEventListener('click', _viewJs.hideDisplayAutorization);
 _viewJs.CHAT_UI.AUTHORIZATION_FORM.addEventListener('submit', getAuthorizationCode);
 function addMessage(event) {
     event.preventDefault();
@@ -544,28 +543,27 @@ function addMessage(event) {
         _viewJs.CHAT_UI.INPUT.value = "";
     } else alert("Введите сообщение");
 }
-function getAuthorizationCode(e) {
+async function getAuthorizationCode(e) {
     e.preventDefault();
-    _jsCookieDefault.default.set('email', _viewJs.CHAT_UI.AUTHORIZATION_INPUT.value, {
-        expires: 30
-    });
-    let requestObject = {
-        email: _viewJs.CHAT_UI.AUTHORIZATION_INPUT.value
-    };
-    console.log(JSON.stringify(requestObject));
-    try {
-        fetch('https://mighty-cove-31255.herokuapp.com/api/user', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/ json; charset=utf-8'
-            },
-            body: JSON.stringify(requestObject)
-        });
-    } catch (err) {
-        alert(err.name);
-    } finally{
-        alert("Запрос отправлен");
-    }
+    /* Cookies.set('email', CHAT_UI.AUTHORIZATION_INPUT.value, { expires: 30 });
+	const requestObject = {
+		email: CHAT_UI.AUTHORIZATION_INPUT.value
+	};
+
+	try {
+		await fetch('https://mighty-cove-31255.herokuapp.com/api/user', {
+			method: 'POST',
+			headers: {
+				'Content-type': 'application/json; charset=utf-8'
+			},
+			body: JSON.stringify(requestObject),
+		})
+	} catch (err) {
+		alert(err.name);
+	} finally {
+		alert("Запрос отправлен");
+		
+	} */ _viewJs.openConfirmationWindow();
 }
 
 },{"./view.js":"cgo89","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","js-cookie":"c8bBu"}],"cgo89":[function(require,module,exports) {
@@ -573,21 +571,14 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "CHAT_UI", ()=>CHAT_UI
 );
+parcelHelpers.export(exports, "CHAT_KEY", ()=>CHAT_KEY
+);
+parcelHelpers.export(exports, "modalWindowsHandler", ()=>modalWindowsHandler
+);
 parcelHelpers.export(exports, "createMessageNode", ()=>createMessageNode
 );
-parcelHelpers.export(exports, "hideDisplayAutorization", ()=>hideDisplayAutorization
-) /* export function createMessageNode(login, info) {
-	let message = document.createElement('div');
-	message.classList.add('message');
-	let text = document.createElement('p');
-	text.textContent = `${login}: ${info}`;
-	let time = document.createElement('p');
-	time.classList.add('message__time');
-	time.textContent = format(new Date(), "H':'m");
-	message.append(text);
-	message.append(time);
-	return message;
-} */ ;
+parcelHelpers.export(exports, "openConfirmationWindow", ()=>openConfirmationWindow
+);
 var _dateFns = require("date-fns");
 const CHAT_UI = {
     BODY: document.querySelector('.chat__body'),
@@ -598,27 +589,117 @@ const CHAT_UI = {
     SUBMIT: document.querySelector('.chat__submit'),
     MODAL: document.querySelector('.modal'),
     AUTHORIZATION: document.querySelector('.authorization'),
-    AUTHORIZATION_CLOSE: document.querySelector('.authorization__header-close'),
+    AUTHORIZATION_CLOSE: document.querySelector('.autorization__header-close'),
+    AUTHORIZATION_BACK: document.querySelector('.autorization__footer-back'),
     AUTHORIZATION_FORM: document.querySelector('.authorization__form'),
-    AUTHORIZATION_INPUT: document.querySelector('.authorization__form > input')
+    AUTHORIZATION_INPUT: document.querySelector('.authorization__form > input'),
+    CONFIRMATION: document.querySelector('.confirmation'),
+    CONFIRMATION_CLOSE: document.querySelector('.confirmation__header-close'),
+    CONFIRMATION_BACK: document.querySelector('.confirmation__footer-back'),
+    CONFIRMATION_FORM: document.querySelector('.confirmation__form'),
+    CONFIRMATION_INPUT: document.querySelector('.confirmation__form > input'),
+    SETTINGS__OPEN: document.querySelector('.chat__settings'),
+    SETTINGS: document.querySelector('.settings'),
+    SETTINGS__CLOSE: document.querySelector('.settings__header-close')
 };
+const CHAT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6InV0YWJvbmQ4OUBnbWFpbC5jb20iLCJpYXQiOjE2NTQxNjA1NjksImV4cCI6MTY1NDYwNjk2OX0.k0a8NQ1SDrFHgqatUBNfYydaE - Ux_0Y6REBDytcI5vE";
+function modalWindowsHandler() {
+    CHAT_UI.ENTER.addEventListener('click', openAutorizationWindow);
+    CHAT_UI.AUTHORIZATION_CLOSE.addEventListener('click', closeModalWindow);
+    CHAT_UI.AUTHORIZATION_BACK.addEventListener('click', closeModalWindow);
+    CHAT_UI.CONFIRMATION_CLOSE.addEventListener('click', closeModalWindow);
+    CHAT_UI.CONFIRMATION_BACK.addEventListener('click', backToAutorizationWindow);
+    CHAT_UI.SETTINGS__OPEN.addEventListener('click', openSettingsWindow);
+    CHAT_UI.SETTINGS__CLOSE.addEventListener('click', closeModalWindow);
+}
 function createMessageNode(login, info, status) {
     let temp = document.getElementById(status);
     let message = temp.content.cloneNode(true);
     let messText = message.querySelector('.message__text');
     let messTime = message.querySelector('.message__time');
-    messText.textContent = `${login}":" ${info}`;
+    messText.textContent = `${login}: ${info}`;
     messTime.textContent = _dateFns.format(new Date(), "HH':'mm");
     return message;
 }
-function hideDisplayAutorization() {
-    CHAT_UI.BODY.classList.toggle('visible');
-    CHAT_UI.BODY.classList.toggle('hidden');
-    CHAT_UI.MODAL.classList.toggle('visible');
-    CHAT_UI.MODAL.classList.toggle('hidden');
-    CHAT_UI.AUTHORIZATION.classList.toggle('visible');
-    CHAT_UI.AUTHORIZATION.classList.toggle('hidden');
+function openAutorizationWindow() {
+    hideChatBody();
+    /* hideSettings();
+	hideConfirmation(); */ displayModalWindow();
+    displayAutorization();
 }
+function openConfirmationWindow() {
+    hideAutorization();
+    hideSettings();
+    displayConfirmation();
+    displayModalWindow();
+}
+function closeModalWindow() {
+    hideConfirmation();
+    hideAutorization();
+    hideSettings();
+    hideModalWindow();
+    displayChatBody();
+}
+function backToAutorizationWindow() {
+    hideConfirmation();
+    displayAutorization();
+}
+function openSettingsWindow() {
+    hideChatBody();
+    displayModalWindow();
+    displaySettings();
+}
+function displayChatBody() {
+    CHAT_UI.BODY.classList.add('visible');
+    CHAT_UI.BODY.classList.remove('hidden');
+}
+function hideChatBody() {
+    CHAT_UI.BODY.classList.remove('visible');
+    CHAT_UI.BODY.classList.add('hidden');
+}
+function displayModalWindow() {
+    CHAT_UI.MODAL.classList.add('visible');
+    CHAT_UI.MODAL.classList.remove('hidden');
+}
+function hideModalWindow() {
+    CHAT_UI.MODAL.classList.remove('visible');
+    CHAT_UI.MODAL.classList.add('hidden');
+}
+function displayAutorization() {
+    CHAT_UI.AUTHORIZATION.classList.add('visible');
+    CHAT_UI.AUTHORIZATION.classList.remove('hidden');
+}
+function hideAutorization() {
+    CHAT_UI.AUTHORIZATION.classList.remove('visible');
+    CHAT_UI.AUTHORIZATION.classList.add('hidden');
+}
+function displayConfirmation() {
+    CHAT_UI.CONFIRMATION.classList.add('visible');
+    CHAT_UI.CONFIRMATION.classList.remove('hidden');
+}
+function hideConfirmation() {
+    CHAT_UI.CONFIRMATION.classList.remove('visible');
+    CHAT_UI.CONFIRMATION.classList.add('hidden');
+}
+function hideSettings() {
+    CHAT_UI.SETTINGS.classList.remove('visible');
+    CHAT_UI.SETTINGS.classList.add('hidden');
+}
+function displaySettings() {
+    CHAT_UI.SETTINGS.classList.add('visible');
+    CHAT_UI.SETTINGS.classList.remove('hidden');
+} /* export function createMessageNode(login, info) {
+	let message = document.createElement('div');
+	message.classList.add('message');
+	let text = document.createElement('p');
+	text.textContent = `${login}: ${info}`;
+	let time = document.createElement('p');
+	time.classList.add('message__time');
+	time.textContent = format(new Date(), "H':'m");
+	message.append(text);
+	message.append(time);
+	return message;
+} */ 
 
 },{"date-fns":"9yHCA","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9yHCA":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");

@@ -143,10 +143,21 @@ form {
   display: flex;
 }
 
-.authorization__header {
+.autorization__header {
   justify-content: space-between;
   margin: 21px 14px 0;
   display: flex;
+}
+
+.autorization__header-close {
+  width: 14px;
+  height: 14px;
+  --weight: .5px;
+  --aa: 1px;
+  --color: #022d36;
+  background: linear-gradient(45deg, transparent calc(50% - var(--weight)  - var(--aa) ), var(--color) calc(50% - var(--weight) ), var(--color) calc(50% + var(--weight) ), transparent calc(50% + var(--weight)  + var(--aa) ) ), linear-gradient(-45deg, transparent calc(50% - var(--weight)  - var(--aa) ), var(--color) calc(50% - var(--weight) ), var(--color) calc(50% + var(--weight) ), transparent calc(50% + var(--weight)  + var(--aa) ) );
+  border: none;
+  display: block;
 }
 
 .authorization__inner {
@@ -155,6 +166,10 @@ form {
   justify-content: center;
   align-items: center;
   display: flex;
+}
+
+.authorization__inner button {
+  width: 120px;
 }
 
 .authorization form {
@@ -170,11 +185,33 @@ form {
   padding: 2px;
 }
 
-.authorization__inner button {
-  width: 120px;
+.autorization__footer {
+  justify-content: flex-end;
+  margin: 5px;
+  display: flex;
 }
 
-.authorization__header-close {
+.autorization__footer-back {
+  width: 65px;
+  margin: 10px;
+}
+
+.confirmation {
+  width: 273px;
+  height: 319px;
+  background-color: #fff;
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
+}
+
+.confirmation__header {
+  justify-content: space-between;
+  margin: 21px 14px 0;
+  display: flex;
+}
+
+.confirmation__header-close {
   width: 14px;
   height: 14px;
   --weight: .5px;
@@ -183,6 +220,78 @@ form {
   background: linear-gradient(45deg, transparent calc(50% - var(--weight)  - var(--aa) ), var(--color) calc(50% - var(--weight) ), var(--color) calc(50% + var(--weight) ), transparent calc(50% + var(--weight)  + var(--aa) ) ), linear-gradient(-45deg, transparent calc(50% - var(--weight)  - var(--aa) ), var(--color) calc(50% - var(--weight) ), var(--color) calc(50% + var(--weight) ), transparent calc(50% + var(--weight)  + var(--aa) ) );
   border: none;
   display: block;
+}
+
+.confirmation__inner {
+  width: inherit;
+  height: inherit;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.confirmation__inner button {
+  width: 65px;
+}
+
+.confirmation form {
+  width: 245px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
+  display: flex;
+}
+
+.confirmation input {
+  height: 32px;
+  padding: 2px;
+}
+
+.confirmation__footer {
+  justify-content: flex-end;
+  margin: 5px;
+  display: flex;
+}
+
+.confirmation__footer-back {
+  width: 65px;
+  margin: 10px;
+}
+
+.settings {
+  width: 273px;
+  height: 319px;
+  background-color: #fff;
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
+}
+
+.confirmation__header {
+  justify-content: space-between;
+  margin: 21px 14px 0;
+  display: flex;
+}
+
+.settings__header-close {
+  width: 14px;
+  height: 14px;
+  --weight: .5px;
+  --aa: 1px;
+  --color: #022d36;
+  background: linear-gradient(45deg, transparent calc(50% - var(--weight)  - var(--aa) ), var(--color) calc(50% - var(--weight) ), var(--color) calc(50% + var(--weight) ), transparent calc(50% + var(--weight)  + var(--aa) ) ), linear-gradient(-45deg, transparent calc(50% - var(--weight)  - var(--aa) ), var(--color) calc(50% - var(--weight) ), var(--color) calc(50% + var(--weight) ), transparent calc(50% + var(--weight)  + var(--aa) ) );
+  z-index: 1;
+  border: none;
+  display: block;
+}
+
+.settings__inner button {
+  width: 65px;
+}
+
+.settings input {
+  height: 32px;
+  padding: 2px;
 }
 
 .visible {

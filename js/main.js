@@ -1,11 +1,12 @@
 import Cookies from 'js-cookie';
-import { CHAT_UI, createMessageNode, hideDisplayAutorization } from "./view.js";
+import { CHAT_UI, createMessageNode, CHAT_KEY } from "./view.js";
+import { modalWindowsHandler, openConfirmationWindow } from "./view.js";
 
-const login = "Я";
+document.addEventListener("DOMContentLoaded", modalWindowsHandler);
+
+let login = "Я";
 
 CHAT_UI.FORM.addEventListener('submit', addMessage);
-CHAT_UI.ENTER.addEventListener('click', hideDisplayAutorization);
-CHAT_UI.AUTHORIZATION_CLOSE.addEventListener('click', hideDisplayAutorization);
 CHAT_UI.AUTHORIZATION_FORM.addEventListener('submit', getAuthorizationCode);
 
 
@@ -21,19 +22,18 @@ function addMessage(event) {
 	}
 }
 
-function getAuthorizationCode(e) {
+async function getAuthorizationCode(e) {
 	e.preventDefault();
-	Cookies.set('email', CHAT_UI.AUTHORIZATION_INPUT.value, { expires: 30 });
-	let requestObject = {
+	/* Cookies.set('email', CHAT_UI.AUTHORIZATION_INPUT.value, { expires: 30 });
+	const requestObject = {
 		email: CHAT_UI.AUTHORIZATION_INPUT.value
 	};
-	console.log(JSON.stringify(requestObject))
 
 	try {
-		fetch('https://mighty-cove-31255.herokuapp.com/api/user', {
+		await fetch('https://mighty-cove-31255.herokuapp.com/api/user', {
 			method: 'POST',
 			headers: {
-				'Content-type': 'application/ json; charset=utf-8'
+				'Content-type': 'application/json; charset=utf-8'
 			},
 			body: JSON.stringify(requestObject),
 		})
@@ -41,5 +41,7 @@ function getAuthorizationCode(e) {
 		alert(err.name);
 	} finally {
 		alert("Запрос отправлен");
-	}
+		
+	} */
+	openConfirmationWindow();
 }
