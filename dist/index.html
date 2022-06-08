@@ -27,16 +27,17 @@
 		<div class="modal__content">
 			<div class="authorization hidden">
 				<div class="authorization__header">
-					<p>Авторизация</p><button class="autorization__header-close"></button>
+					<p>Авторизация</p><button class="authorization__header-close"></button>
 				</div>
 				<div class="authorization__inner">
 					<form class="authorization__form">
 						<p>Почта:</p>
-						<input type="text" placeholder="введите почту.."><button type="submit">Получить код</button>
+						<input type="text" placeholder="ваша почта.."><button type="submit">Получить код</button>
 					</form>
 				</div>
-				<div class="autorization__footer">
-					<button class="autorization__footer-back">Назад</button>
+				<button class="authorization__inner-link">У меня уже есть код</button>
+				<div class="authorization__footer">
+					<button class="authorization__footer-back">Назад</button>
 				</div>
 			</div>
 			<div class="confirmation hidden">
@@ -46,10 +47,10 @@
 				<div class="confirmation__inner ">
 					<div>
 						<form class="confirmation__form"><input type="text" placeholder="код подтверждения.."><button type="submit">Войти</button>
+							<p class="confirmation__form-info">Вам выслали код авторизации на почту указаную ранее, введите его
+								в окно формы</p>
 						</form>
 					</div>
-					<p class="confirmation__form-info">Вам выслали код авторизации на почту указаную ранее, введите его в
-						окно формы</p>
 				</div>
 				<div class="confirmation__footer">
 					<button class="confirmation__footer-back">Назад</button>

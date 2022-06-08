@@ -530,56 +530,172 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _jsCookie = require("js-cookie");
 var _jsCookieDefault = parcelHelpers.interopDefault(_jsCookie);
 var _viewJs = require("./view.js");
+const URL = "mighty-cove-31255.herokuapp.com";
 document.addEventListener("DOMContentLoaded", _viewJs.modalWindowsHandler);
-let login = "Я";
-_viewJs.CHAT_UI.FORM.addEventListener('submit', addMessage);
+document.addEventListener("DOMContentLoaded", _viewJs.setCookies);
+document.addEventListener("DOMContentLoaded", openSocket);
+document.addEventListener("DOMContentLoaded", changeLogin);
 _viewJs.CHAT_UI.AUTHORIZATION_FORM.addEventListener('submit', getAuthorizationCode);
-function addMessage(event) {
-    event.preventDefault();
-    let messageText = _viewJs.CHAT_UI.INPUT.value;
-    if (messageText !== '') {
-        let message = _viewJs.createMessageNode(login, messageText, "sent__message");
-        _viewJs.CHAT_UI.WINDOW.append(message);
-        _viewJs.CHAT_UI.INPUT.value = "";
-    } else alert("Введите сообщение");
+_viewJs.CHAT_UI.SETTINGS__FORM.addEventListener('submit', getLogin);
+_viewJs.CHAT_UI.CONFIRMATION_FORM.addEventListener('submit', getToken);
+async function openSocket(e1) {
+    e1.preventDefault();
+    if (_jsCookieDefault.default.get('token') !== '') {
+        TOKEN = _jsCookieDefault.default.get('token');
+        let socket = new WebSocket(`ws://${URL}/websockets?${TOKEN}`);
+        alert('подождите соединения с сервером');
+        try {
+            socket.onopen = function(e) {
+                alert("[open] Соединение установлено");
+                alert("Отправляем данные на сервер");
+                socket.send(JSON.stringify({
+                    text: 'тестовый текст'
+                }));
+            };
+            _viewJs.CHAT_UI.FORM.addEventListener('submit', function(e) {
+                e.preventDefault();
+                let messageText = _viewJs.CHAT_UI.INPUT.value;
+                if (messageText !== '') {
+                    const login = _jsCookieDefault.default.get("login") !== '' ? _jsCookieDefault.default.get("login") : "Я";
+                    socket.send(JSON.stringify({
+                        text: `${messageText}`
+                    }));
+                    _viewJs.CHAT_UI.INPUT.value = "";
+                } else _viewJs.setAlert(_viewJs.CHAT_UI.INPUT, _viewJs.PLACEHOLDERS.message, _viewJs.PLACEHOLDERS.alertMessage);
+                socket.onmessage = function(event) {
+                    let response = JSON.parse(event.data);
+                    console.log(response);
+                    let { text , user: { email , name  } , createdAt  } = response;
+                    console.log(createdAt);
+                    let message;
+                    if (email === _jsCookieDefault.default.get('email')) message = _viewJs.createMessageNode(name, text, createdAt, "sent__message");
+                    else message = _viewJs.createMessageNode(name, text, createdAt, "received__message");
+                    _viewJs.CHAT_UI.WINDOW.prepend(message);
+                };
+            });
+        } catch (error) {
+            alert(`Не получилось соединениться с сервером, потому что: ${error.message}`);
+        }
+    } else {
+        alert('Настройте соединение с сервером получив токен на почту');
+        _viewJs.openAutorizationWindow();
+    }
 }
-async function getAuthorizationCode(e) {
+/* function addMessage(event, socket) {
+	
+} */ async function getAuthorizationCode(e) {
     e.preventDefault();
-    /* Cookies.set('email', CHAT_UI.AUTHORIZATION_INPUT.value, { expires: 30 });
-	const requestObject = {
-		email: CHAT_UI.AUTHORIZATION_INPUT.value
-	};
-
-	try {
-		await fetch('https://mighty-cove-31255.herokuapp.com/api/user', {
-			method: 'POST',
-			headers: {
-				'Content-type': 'application/json; charset=utf-8'
-			},
-			body: JSON.stringify(requestObject),
-		})
-	} catch (err) {
-		alert(err.name);
-	} finally {
-		alert("Запрос отправлен");
-		
-	} */ _viewJs.openConfirmationWindow();
+    const mail = _viewJs.CHAT_UI.AUTHORIZATION_INPUT.value;
+    if (mail !== '') {
+        _jsCookieDefault.default.set('email', mail, {
+            expires: 30
+        });
+        const requestObject = {
+            email: mail
+        };
+        try {
+            await fetch(`https://${URL}/api/user`, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json; charset=utf-8'
+                },
+                body: JSON.stringify(requestObject)
+            });
+        } catch (err) {
+            alert(err.name);
+        } finally{
+            alert("Запрос отправлен");
+        }
+        _viewJs.openConfirmationWindow();
+    } else _viewJs.setAlert(_viewJs.CHAT_UI.AUTHORIZATION_INPUT, _viewJs.PLACEHOLDERS.mail, _viewJs.PLACEHOLDERS.alertMail);
+}
+async function getToken(event) {
+    event.preventDefault();
+    if (_viewJs.CHAT_UI.CONFIRMATION_INPUT.value !== '') {
+        let TOKEN = _viewJs.CHAT_UI.CONFIRMATION_INPUT.value;
+        _jsCookieDefault.default.set('token', TOKEN, {
+            expires: 1440
+        });
+        openSocket();
+    } else _viewJs.setAlert(_viewJs.CHAT_UI.CONFIRMATION_INPUT, _viewJs.PLACEHOLDERS.code, _viewJs.PLACEHOLDERS.alertCode);
+}
+function getLogin() {
+    if (_viewJs.CHAT_UI.SETTINGS__INPUT.value !== "") {
+        let login = _viewJs.CHAT_UI.SETTINGS__INPUT.value;
+        _viewJs.closeModalWindow();
+        _jsCookieDefault.default.set('login', login, {
+            expires: 1440
+        });
+        changeLogin(login);
+    } else _viewJs.setAlert(_viewJs.CHAT_UI.SETTINGS__INPUT, _viewJs.PLACEHOLDERS.login, _viewJs.PLACEHOLDERS.alertLogin);
+}
+async function changeLogin(e) {
+    e.preventDefault();
+    if (_jsCookieDefault.default.get('login') !== '') {
+        let login = _jsCookieDefault.default.get('login');
+        const requestObject = {
+            name: login
+        };
+        try {
+            await fetch(`https://${URL}/api/user`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-type': 'application/json; charset=utf-8',
+                    'Authorization': `Bearer ${_jsCookieDefault.default.get('token')}`
+                },
+                body: JSON.stringify(requestObject)
+            });
+        } catch (err) {
+            alert(err.name);
+        }
+    }
 }
 
 },{"./view.js":"cgo89","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","js-cookie":"c8bBu"}],"cgo89":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "CHAT_UI", ()=>CHAT_UI
+parcelHelpers.export(exports, "PLACEHOLDERS", ()=>PLACEHOLDERS
 );
-parcelHelpers.export(exports, "CHAT_KEY", ()=>CHAT_KEY
+parcelHelpers.export(exports, "setCookies", ()=>setCookies
+);
+parcelHelpers.export(exports, "CHAT_UI", ()=>CHAT_UI
 );
 parcelHelpers.export(exports, "modalWindowsHandler", ()=>modalWindowsHandler
 );
 parcelHelpers.export(exports, "createMessageNode", ()=>createMessageNode
 );
+parcelHelpers.export(exports, "openAutorizationWindow", ()=>openAutorizationWindow
+);
+parcelHelpers.export(exports, "setAlert", ()=>setAlert
+);
 parcelHelpers.export(exports, "openConfirmationWindow", ()=>openConfirmationWindow
 );
+parcelHelpers.export(exports, "closeModalWindow", ()=>closeModalWindow
+);
 var _dateFns = require("date-fns");
+var _jsCookie = require("js-cookie");
+var _jsCookieDefault = parcelHelpers.interopDefault(_jsCookie);
+const PLACEHOLDERS = {
+    message: "сообщение..",
+    alertMessage: 'введите сообщение..',
+    login: 'имя в чате..',
+    alertLogin: 'введите логин..',
+    mail: 'ваша почта..',
+    alertMail: 'введите почту..',
+    code: 'код подтверждения..',
+    alertCode: 'введите код..'
+};
+function setCookies() {
+    if (!_jsCookieDefault.default?.get('token')) _jsCookieDefault.default.set('token', '', {
+        expires: 1440
+    });
+    if (!_jsCookieDefault.default?.get('email')) _jsCookieDefault.default.set('email', '', {
+        expires: 1440
+    });
+    if (!_jsCookieDefault.default?.get('login')) _jsCookieDefault.default.set('login', '', {
+        expires: 1440
+    });
+}
 const CHAT_UI = {
     BODY: document.querySelector('.chat__body'),
     WINDOW: document.querySelector('.chat__window'),
@@ -589,10 +705,11 @@ const CHAT_UI = {
     SUBMIT: document.querySelector('.chat__submit'),
     MODAL: document.querySelector('.modal'),
     AUTHORIZATION: document.querySelector('.authorization'),
-    AUTHORIZATION_CLOSE: document.querySelector('.autorization__header-close'),
-    AUTHORIZATION_BACK: document.querySelector('.autorization__footer-back'),
+    AUTHORIZATION_CLOSE: document.querySelector('.authorization__header-close'),
+    AUTHORIZATION_BACK: document.querySelector('.authorization__footer-back'),
     AUTHORIZATION_FORM: document.querySelector('.authorization__form'),
     AUTHORIZATION_INPUT: document.querySelector('.authorization__form > input'),
+    AUTHORIZATION_SKIP: document.querySelector('.authorization__inner-link'),
     CONFIRMATION: document.querySelector('.confirmation'),
     CONFIRMATION_CLOSE: document.querySelector('.confirmation__header-close'),
     CONFIRMATION_BACK: document.querySelector('.confirmation__footer-back'),
@@ -600,7 +717,9 @@ const CHAT_UI = {
     CONFIRMATION_INPUT: document.querySelector('.confirmation__form > input'),
     SETTINGS__OPEN: document.querySelector('.chat__settings'),
     SETTINGS: document.querySelector('.settings'),
-    SETTINGS__CLOSE: document.querySelector('.settings__header-close')
+    SETTINGS__CLOSE: document.querySelector('.settings__header-close'),
+    SETTINGS__FORM: document.querySelector('.settings__form'),
+    SETTINGS__INPUT: document.querySelector('.settings__form > input')
 };
 const CHAT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6InV0YWJvbmQ4OUBnbWFpbC5jb20iLCJpYXQiOjE2NTQxNjA1NjksImV4cCI6MTY1NDYwNjk2OX0.k0a8NQ1SDrFHgqatUBNfYydaE - Ux_0Y6REBDytcI5vE";
 function modalWindowsHandler() {
@@ -611,14 +730,15 @@ function modalWindowsHandler() {
     CHAT_UI.CONFIRMATION_BACK.addEventListener('click', backToAutorizationWindow);
     CHAT_UI.SETTINGS__OPEN.addEventListener('click', openSettingsWindow);
     CHAT_UI.SETTINGS__CLOSE.addEventListener('click', closeModalWindow);
+    CHAT_UI.AUTHORIZATION_SKIP.addEventListener('click', openConfirmationWindow);
 }
-function createMessageNode(login, info, status) {
+function createMessageNode(login, info, date, status) {
     let temp = document.getElementById(status);
     let message = temp.content.cloneNode(true);
     let messText = message.querySelector('.message__text');
     let messTime = message.querySelector('.message__time');
     messText.textContent = `${login}: ${info}`;
-    messTime.textContent = _dateFns.format(new Date(), "HH':'mm");
+    messTime.textContent = _dateFns.format(new Date(date), "HH':'mm");
     return message;
 }
 function openAutorizationWindow() {
@@ -626,6 +746,15 @@ function openAutorizationWindow() {
     /* hideSettings();
 	hideConfirmation(); */ displayModalWindow();
     displayAutorization();
+    if (_jsCookieDefault.default.get('email') !== '') CHAT_UI.AUTHORIZATION_INPUT.value = _jsCookieDefault.default.get('email');
+}
+function setAlert(input, placeholder, alertPlaceholder) {
+    input.classList.add('alert');
+    input.placeholder = alertPlaceholder;
+    input.addEventListener('focus', ()=>{
+        input.placeholder = placeholder;
+        return input.classList.remove('alert');
+    });
 }
 function openConfirmationWindow() {
     hideAutorization();
@@ -648,6 +777,7 @@ function openSettingsWindow() {
     hideChatBody();
     displayModalWindow();
     displaySettings();
+    if (_jsCookieDefault.default.get('login') !== '') CHAT_UI.SETTINGS__INPUT.value = _jsCookieDefault.default.get('login');
 }
 function displayChatBody() {
     CHAT_UI.BODY.classList.add('visible');
@@ -701,7 +831,7 @@ function displaySettings() {
 	return message;
 } */ 
 
-},{"date-fns":"9yHCA","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9yHCA":[function(require,module,exports) {
+},{"date-fns":"9yHCA","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","js-cookie":"c8bBu"}],"9yHCA":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // This file is generated automatically by `scripts/build/indices.js`. Please, don't change it.

@@ -50,7 +50,6 @@ img {
   width: 304px;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 7px;
   display: flex;
 }
 
@@ -60,8 +59,10 @@ img {
   -ms-overflow-style: none;
   scrollbar-width: none;
   border: 1px solid #000;
-  flex-direction: column;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
   align-items: flex-end;
+  margin: 7px auto;
   display: flex;
   overflow-y: scroll;
 }
@@ -93,20 +94,23 @@ form {
 }
 
 .message {
-  text-align: right;
   max-width: 300px;
   overflow-wrap: anywhere;
   background-color: #e5e5e5;
   border-radius: 10px;
   flex-direction: column;
   align-items: flex-end;
-  margin: 3px;
+  margin: 5px;
   padding: 4px;
   display: flex;
 }
 
 .sent__message {
-  background-color: #f6f6f6;
+  text-align: right;
+}
+
+.received__message {
+  text-align: left;
 }
 
 .delivered {
@@ -131,7 +135,7 @@ form {
 }
 
 .alert {
-  border-color: red;
+  border: 2px solid red;
 }
 
 .authorization {
@@ -143,13 +147,13 @@ form {
   display: flex;
 }
 
-.autorization__header {
+.authorization__header {
   justify-content: space-between;
   margin: 21px 14px 0;
   display: flex;
 }
 
-.autorization__header-close {
+.authorization__header-close {
   width: 14px;
   height: 14px;
   --weight: .5px;
@@ -172,6 +176,12 @@ form {
   width: 120px;
 }
 
+.authorization__inner-link {
+  border: none;
+  text-decoration: underline;
+  display: inline;
+}
+
 .authorization form {
   width: 245px;
   flex-direction: column;
@@ -185,13 +195,13 @@ form {
   padding: 2px;
 }
 
-.autorization__footer {
+.authorization__footer {
   justify-content: flex-end;
   margin: 5px;
   display: flex;
 }
 
-.autorization__footer-back {
+.authorization__footer-back {
   width: 65px;
   margin: 10px;
 }
@@ -267,7 +277,7 @@ form {
   display: flex;
 }
 
-.confirmation__header {
+.settings__header {
   justify-content: space-between;
   margin: 21px 14px 0;
   display: flex;
@@ -285,6 +295,14 @@ form {
   display: block;
 }
 
+.settings__inner {
+  width: inherit;
+  height: inherit;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
 .settings__inner button {
   width: 65px;
 }
@@ -292,6 +310,14 @@ form {
 .settings input {
   height: 32px;
   padding: 2px;
+}
+
+.settings form {
+  width: 245px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
+  display: flex;
 }
 
 .visible {
